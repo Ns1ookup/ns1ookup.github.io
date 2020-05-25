@@ -1,7 +1,7 @@
 # Windows 权限操纵
 
 ## 概述
-为什么要记录这篇文章，在甲方做攻防演练的过程中，仅仅是对目标主机做信息收集就已经可以获取到足够多的信息。但做攻防对抗还是要有点追求，要考虑拿到更多可利用的漏洞。不然领导会觉得每次就是信息收集，打掉目标主机，没有啥新的技术。
+为什么要记录这篇文章，在甲方做攻防演练的过程中，仅仅是对目标主机做信息收集就已经可以获取到足够多的信息。但做攻防对抗还是要有点追求，要考虑拿到更多可利用的漏洞。不然领导会觉得每次就是信息收集，打掉目标主机，没有啥新的技术。所以做甲方不光要干杂活，还要钻研技术，把杂活干的漂亮.....
 
 
 在渗透测试中，会遇到需要（提权和降权）的情况。方便操作用户的文件目录
@@ -462,3 +462,8 @@ reg add "hklm\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution 
 https://github.com/3gstudent/Homework-of-C-Language/blob/master/EnableSeDebugPrivilege.cpp
 
 代码实现了开启当前进程的SeDebugPrivilege权限，向指定进程注入dll
+
+
+## 参考链接
+https://3gstudent.github.io/3gstudent.github.io/Windows%E6%9C%AC%E5%9C%B0%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7Juicy-Potato%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90/
+https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-Windows-Token%E4%B9%9D%E7%A7%8D%E6%9D%83%E9%99%90%E7%9A%84%E5%88%A9%E7%94%A8/
