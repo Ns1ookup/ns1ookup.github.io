@@ -46,7 +46,7 @@ http://www.verydoc.com/exeshell.html
 命令行执行 `lsrunas.exe /user:a /password:xxxxx /domain: /command:"calc.exe" /runpath:c:\`
 
 如下图
-![](./token_photo/2.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/2.png)
 
 
 其它第三方工具类似，不需要多说明
@@ -57,7 +57,7 @@ http://www.verydoc.com/exeshell.html
 通过runas lsrunas等方式降权，均会启动失败。这里推荐使用进程注入的方式。
 如下图所示，在cobaltstrike获取了system权限的情况下。进入进程列表，选定普通用户权限的进程，执行进程注入
 
-![](./token_photo/3.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/3.png)
 
 通过工具SelectMyParent，指定进程pid，执行相应的命令。
 使用步骤：
@@ -72,7 +72,7 @@ SelectMyParent.exe calc.exe 504
 
 显示calc.exe为winlogon.exe的子进程，如下图
 
-![](./token_photo/4.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/4.png)
 
 工具地址：
 https://github.com/koeracomp5/engine3/blob/6c86b5c71933287e2c123c2a4630044006882f00/27env/Scripts/SelectMyParent.py
@@ -92,7 +92,7 @@ psexec.exe -accepteula -s -d notepad.exe
 psexec.exe -accepteula -s -i -d notepad.exe
 
 如下图
-![](./token_photo/5.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/5.png)
 
 ### 2.2 通过计划任务
 
@@ -114,7 +114,7 @@ psexec.exe -accepteula -s -i -d notepad.exe
 
 获取了管理员权限的用户后，利用cobaltstrike内置的psexec/psexec_psh/winrm。
 其中psexec_psh类似psexec命令，使用powershell作为payload，该payload不写入磁盘
-![](./token_photo/6.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/6.png)
 
 ### 2.4 利用token复制
 通过复制system权限的token，使进程获得system权限，常用工具如下：
@@ -122,10 +122,10 @@ psexec.exe -accepteula -s -i -d notepad.exe
 incognito
 
 列举token：`incognito.exe list_tokens -u`
-![](./token_photo/7.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/7.png)
 
 复制token：`incognito.exe execute [options] <token> <command>`
-![](./token_photo/8.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/8.png)
 
 下载地址：
 
@@ -146,10 +146,10 @@ Windows有两种类型的Token：
 
 incognito
 列举token：`incognito.exe list_tokens -u`
-![](./token_photo/7.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/7.png)
 
 复制token：`incognito.exe execute [options] <token> <command>`
-![](./token_photo/8.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/8.png)
 
 ### 3.2 Potato系列
 
@@ -185,7 +185,7 @@ IE浏览器在默认配置下会通过URL:"http://wpad/wpad.dat"来自动尝试�
 
 **总结**
 修改了IE的配置为自动检测
-![](./token_photo/12.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/12.png)
 
 测试主机为win10系统，启动hot potato后。ping wpad找不到地址，NBNS欺骗未成功。尚未发现无法复现的原因
 
@@ -230,7 +230,7 @@ Juicy Potato支持指定任意本地端口，但是RPC一般默认为135端口�
 
 **漏洞利用**
 通过上传webshell控制主机，执行 `whoami /priv`查看当前权限
-![](./token_photo/13.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/13.png)
 ```
 T:\>JuicyPotato.exe
 JuicyPotato v0.1
@@ -251,11 +251,11 @@ Optional args:
 ```
 执行如下命令，使用默认的CLSID。创建进程成功
 
-![](./token_photo/14.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/14.png)
 
 获取具有system权限的cmd窗口
 
-![](./token_photo/15.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/15.png)
 
 
 #### 3.2.3 pipePotato
@@ -273,7 +273,7 @@ https://github.com/BeichenDream/BadPotato
 https://github.com/daikerSec/pipePotato
 
 在apache搭建的服务器上，上传webshell。上传编译好的BadPotato程序，执行如下命令：
-![](./token_photo/16.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/16.png)
 
 
 
@@ -290,14 +290,14 @@ https://github.com/daikerSec/pipePotato
 - SeDebugPrivilege
 
 通过命令 `whoami /priv` 查看当前权限，如下所示
-![](./token_photo/9.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/9.png)
 
 通常情况下，普通用户不会拥有上述的九种特权。
-![](./token_photo/11.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/11.png)
 
 只有本地开启的应用服务，才会拥有特殊权限。例如上传webshell，以IIS用户的服务查看权限
 
-![](./token_photo/10.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/10.png)
 
 
 #### 3.3.1 SeImpersonatePrivilege权限的利用思路
