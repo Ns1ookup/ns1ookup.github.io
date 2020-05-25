@@ -34,7 +34,7 @@ system和administrator权限下会出现的问题：
 接着输入密码：xxxxxx
 
 calc.exe的权限为用户a的权限
-![](https://github.com/Ns1ookup/ns1ookup.github.io/blob/master/_posts/token_photo/1.png)
+![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/1.png)
 
 #### 1.1.2 lsrunas
 
