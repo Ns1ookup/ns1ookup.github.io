@@ -1,6 +1,6 @@
 # Spring MVC Autobinding漏洞分析
 
-##1.概述
+## 1.概述
 
 Autobinding-自动绑定漏洞，根据不同语言/框架，该漏洞有几个不同的叫法，如下：
 
@@ -10,9 +10,9 @@ Autobinding-自动绑定漏洞，根据不同语言/框架，该漏洞有几个�
 
 软件框架有时允许开发人员自动将HTTP请求参数绑定到程序代码变量或对象中，从而使开发人员更容易地使用该框架。这里攻击者就可以利用这种方法通过构造http请求，将请求参数绑定到对象上，当代码逻辑使用该对象参数时就可能产生一些不可预料的结果。
 
-##2.Java中的注解
+## 2.Java中的注解
 
-###2.1 @ModelAttribute
+### 2.1 @ModelAttribute
 注解@ModelAttribute是一个非常常用的注解，其功能主要在两方面：
 
 - 运用在参数上，会将客户端传递过来的参数按名称注入到指定对象中，并且会将这个对象自动加入ModelMap中，便于View层使用；
@@ -58,13 +58,13 @@ Autobinding-自动绑定漏洞，根据不同语言/框架，该漏洞有几个�
 输出结果如下：
 ![](https://i.imgur.com/vdzsfVn.png)
 
-###2.2@SessionAttributes
+### 2.2@SessionAttributes
 在默认情况下，ModelMap 中的属性作用域是 request 级别，也就是说，当本次请求结束后，ModelMap 中的属性将销毁。如果希望在多个请求中共享 ModelMap 中的属性，必须将其属性转存到 session 中，这样 ModelMap 的属性才可以被跨请求访问。
 
 Spring 允许我们有选择地指定 ModelMap 中的哪些属性需要转存到 session 中，以便下一个请求对应的 ModelMap 的属性列表中还能访问到这些属性。这一功能是通过类定义处标注 @SessionAttributes("user") 注解来实现的。SpringMVC 就会自动将 @SessionAttributes 定义的属性注入到 ModelMap 对象，在 setup action 的参数列表时，去 ModelMap 中取到这样的对象，再添加到参数列表。只要不去调用 SessionStatus 的 setComplete() 方法，这个对象就会一直保留在 Session 中，从而实现 Session 信息的共享
 
 
-##3.案例分析
+## 3.案例分析
 下载测试环境：https://github.com/GrrrDog/ZeroNights-HackQuest-2016
 
 将war包部署在tomcat的webapps中，菜单栏有about，reg，Sign up，Forgot password这4个页面组成。
@@ -90,8 +90,8 @@ Spring 允许我们有选择地指定 ModelMap 中的哪些属性需要转存到
 修改成功，打印输出的日志信息如下：
 ![](https://i.imgur.com/hfYpa98.png)
 
-##4.安全建议
+## 4.安全建议
 Spring MVC中可以使用@InitBinder注解，通过WebDataBinder的方法setAllowedFields、setDisallowedFields设置允许或不允许绑定的参数。
 
-##5.参考
+## 5.参考
 https://www.owasp.org/index.php/Mass_Assignment_Cheat_Sheet#Spring_MVC 

@@ -1,24 +1,24 @@
-#Spring MVC 目录穿越漏洞(CVE-2018-1271)分析
+# Spring MVC 目录穿越漏洞(CVE-2018-1271)分析
 
-##1. 概述
+## 1. 概述
 
-###漏洞简介
+### 漏洞简介
 2018年04月05日，Pivotal公布了Spring MVC存在一个目录穿越漏洞(CVE-2018-1271)。Spring Framework版本5.0到5.0.4,4.3到4.3.14以及较旧的不受支持的版本允许应用程序配置Spring MVC以提供静态资源（例如CSS，JS，图像）。当Spring MVC的静态资源存放在Windows系统上时，攻击可以通过构造特殊URL导致目录遍历漏洞。
 
 
-###影响版本
+### 影响版本
 - Spring Framework 5.0 to 5.0.4.
 - Spring Framework 4.3 to 4.3.14
 - 旧版本仍然受影响
 
 
-###利用条件
+### 利用条件
 
 1. Windows系统
 1. 要使用file协议打开资源文件目录
 
 
-##2.环境搭建
+## 2.环境搭建
 
 1）下载spring-mvc-showcase文件 
 
@@ -47,7 +47,7 @@ https://github.com/spring-projects/spring-mvc-showcase.git
 ![](https://i.imgur.com/IFkB1dE.png)
 
 
-##3.漏洞分析
+## 3.漏洞分析
 
 当外部要访问静态资源时，会调用org.springframework.web.servlet.resource.ResourceHttpRequestHandler下的handleRequest来处理，在此处下断点调试
 ![](https://i.imgur.com/iKWaVPY.png)
@@ -96,7 +96,7 @@ https://github.com/spring-projects/spring-mvc-showcase.git
 
 ![](https://i.imgur.com/NWE8c8E.png)
 
-##4.补丁修复分析
+## 4.补丁修复分析
 修改pom.xml文件中org.springframework-version为5.0.6.RELEASE，该版本为修复版
 ![](https://i.imgur.com/FPv04gG.png)
 
@@ -114,13 +114,13 @@ isInvalidEncodedPath方法直接进行cleanPath方法处理，造成对包含"..
 
 ![](https://i.imgur.com/7TPRTpo.png)
 
-##5.修复建议
+## 5.修复建议
 
 - Spring Framework 5.*（5.0到5.0.4）版本，建议更新到5.0.5版本
 - Spring Framework 4.3.*（4.3到4.3.14）版本，建议更新到4.3.15版本
 - 不再受支持的旧版本，建议更新到4.3.15版本或5.0.5版本
 
 
-##6.参考链接
+## 6.参考链接
 
 https://paper.seebug.org/665/

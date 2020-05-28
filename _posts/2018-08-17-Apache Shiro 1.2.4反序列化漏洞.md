@@ -1,9 +1,9 @@
 # Apache Shiro 1.2.4反序列化漏洞的分析
 
-##一. 概述
+## 一. 概述
 Apache Shiro 在 Java 的权限及安全验证框架中占用重要的一席之地，在它编号为550的 issue 中爆出严重的 Java 反序列化漏洞。
 
-##二. 准备
+## 二. 准备
 
 
 **漏洞环境搭建**
@@ -79,7 +79,7 @@ Java反序列化工具ysoserial，链接地址：https://github.com/frohoff/ysos
 
     java -jar ysoserial.jar [payload] '[command]'
 
-###三. 漏洞分析
+### 三. 漏洞分析
 从官方的 issue 上来看，存在几个重要的点:
 
 - rememberMe cookie
