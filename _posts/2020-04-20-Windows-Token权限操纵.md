@@ -29,6 +29,7 @@ system和administrator权限下会出现的问题：
 需要获取普通权限用户的账号密码
 
 #### 1.1.1 runas
+
 命令行执行 `runas /user:a calc.exe`
 
 接着输入密码：xxxxxx
@@ -83,6 +84,7 @@ https://github.com/3gstudent/From-System-authority-to-Medium-authority/blob/mast
 ## 2.从Admin权限切换到System
 
 ### 2.1 通过psexec
+
 以system权限启动：
 
 psexec.exe -accepteula -s -d notepad.exe
@@ -142,6 +144,7 @@ Windows有两种类型的Token：
 两种token只在系统重启后清除。具有Delegation token的用户在注销后，该Token将变成Impersonation token，依旧有效
 
 ### 3.1 Token窃取
+
 通过模拟或修改正在执行的进程中具有适当权限级别的身份验证令牌来工作。
 
 incognito
@@ -154,21 +157,26 @@ incognito
 ### 3.2 Potato系列
 
 #### 3.2.1 Hot Potato
+
 在Windows操作系统的默认配置下，Hot Potato（也被称为Potato）能够利用NTLM relay（特别是HTTP->SMB relay）和NBNS协议欺骗。
 
 **本地NBNS欺骗**
+
 NBNS是一个广播UDP协议，可在Windows环境中常用的名称解析。在渗透测试过程中，提前获知目标主机（在这种情况下，我们的目标是127.0.0.1）并发送NBNS查询，就可以制作一个信号并使其淹没在目标主机与NBNS响应（因为它是一个UDP协议）。
 
 **伪造WPAD代理服务器**
+
 WPAD(Web Proxy Auto-Discovery Protocol)是 Web 代理自动发现协议的简称，该协议的功能是可以使局域网中用户的浏览器可以自动发现内网中的代理服务器，并使用已发现的代理服务器连接互联网或者企业内网。
 IE浏览器在默认配置下会通过URL:"http://wpad/wpad.dat"来自动尝试检测网络代理。而且Windows中的一些服务也会采用这一机制，例如Windows Update，而且这似乎是Windows的一种版本依赖。
 
 **HTTP -> SMB HTLM Relay**
+
 与所有的HTTP流量，现在流经我们控制的服务器上，我们可以用来要求NTLM身份验证！ 
 在Potato的exploit中，所有的请求都以302重定向到的 "http://localhost/GETHASHESxxxxx" ，其中xxxxx是一些独特的标识符。请求 "http://localhost/GETHASHESxxxxx" 会401响应要求NTLM身份验证。 
 在NTLM凭据传递到本地的SMB监听器，会创建一个新的系统服务，运行你定义的命令，此命令将以 "NT AUTHORITY \ SYSTEM" 权限运行。
 
 **漏洞利用**
+
 1.Windows 7
 
 `Potato.exe -ip <local ip> -cmd <command to run> -disable_exhaust true`
@@ -184,6 +192,7 @@ IE浏览器在默认配置下会通过URL:"http://wpad/wpad.dat"来自动尝试�
 `Potato.exe -ip <local ip> -cmd <cmd to run> -disable_exhaust true -disable_defender true`
 
 **总结**
+
 修改了IE的配置为自动检测
 ![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/12.png)
 
@@ -191,6 +200,7 @@ IE浏览器在默认配置下会通过URL:"http://wpad/wpad.dat"来自动尝试�
 
 
 #### 3.2.2 Juicy Potato
+
 Juicy Potato是在工具RottenPotatoNG的基础上做了扩展，适用条件更广。
 
 利用的前提是获得了SeImpersonate或者SeAssignPrimaryToken权限。通常在获取本地服务执行权限的前提下，如webshell。
@@ -198,6 +208,7 @@ Juicy Potato是在工具RottenPotatoNG的基础上做了扩展，适用条件更
 Juicy Potato的下载地址：`https://github.com/ohpe/juicy-potato`
 
 **限制条件**
+
 - 需要支持SeImpersonate或者SeAssignPrimaryToken权限
 - 开启DCOM
 - 本地支持RPC或者远程服务器支持PRC并能成功登录
@@ -208,27 +219,33 @@ Juicy Potato的下载地址：`https://github.com/ohpe/juicy-potato`
 首先确保当前用户支持SeImpersonate或者SeAssignPrimaryToken权限
 
 **1) 加载COM，发出请求，权限为System**
+
 在指定ip和端口的位置尝试加载一个COM对象。RottenPotatoNG使用的COM对象为BITS，CLSID为{4991d34b-80a1-4291-83b6-3328366b9097}
 
 可供选择的COM对象不唯一，Juicy Potato提供了多个，详细列表可参考如下地址：
 `https://github.com/ohpe/juicy-potato/blob/master/CLSID/README.md`
 
 **2) 回应步骤1的请求，发起NTLM认证**
+
 正常情况下，由于权限不足，当前权限不是System，无法认证成功
 
 **3) 针对本地端口，同样发起NTLM认证，权限为当前用户**
+
 由于权限为当前用户，所以NTLM认证能够成功完。RottenPotatoNG使用的135端口
 
 Juicy Potato支持指定任意本地端口，但是RPC一般默认为135端口，很少被修改
 
 **4) 分别拦截两个NTLM认证的数据包，替换数据，通过NTLM重放使得步骤1(权限为System)的NTLM认证通过，获得System权限的Token**
+
 重放时需要注意NTLM认证的NTLM Server Challenge不同，需要修正
 
 **5) 利用System权限的Token创建新进程**
+
 如果开启SeImpersonate权限，调用CreateProcessWithToken，传入System权限的Token，创建的进程为System权限
 如果开启SeAssignPrimaryToken权限，调用CreateProcessAsUser，传入System权限的Token，创建的进程为System权限
 
 **漏洞利用**
+
 通过上传webshell控制主机，执行 `whoami /priv`查看当前权限
 ![](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/token_photo/13.png)
 ```
@@ -261,9 +278,11 @@ Optional args:
 #### 3.2.3 pipePotato
 
 **影响**
+
 对于任意windows Server 2012以上的windows server版本(win8以上的某些windows版本也行)，从Service用户提升到System。
 
 **实现方式**
+
 spoolsv.exe进程会注册一个 rpc 服务,任何授权用户可以访问该进程,同时攻击者可以利用Server names规范问题注册一个命名管道,而同时System用户访问该管道的时候，我们就可以模拟该token创建一个System权限的进程。
 
 **漏洞利用**
@@ -278,6 +297,7 @@ https://github.com/daikerSec/pipePotato
 
 
 ### 3.3 九种Token权限操纵
+
 需要考虑的9种权限如下：
 - SeImpersonatePrivilege
 - SeAssignPrimaryPrivilege
@@ -301,6 +321,7 @@ https://github.com/daikerSec/pipePotato
 
 
 #### 3.3.1 SeImpersonatePrivilege权限的利用思路
+
 身份验证后模拟客户端(Impersonatea client after authentication)，拥有该权限的进程能够模拟已有的token，但不能创建新的token。
 
 该用户具有该权限：
@@ -310,6 +331,7 @@ https://github.com/daikerSec/pipePotato
 - 由组件对象模型 (COM) 基础结构启动的并配置为在特定帐户下运行的COM服务器
 
 **利用思路**
+
 1. 利用NTLM Relay to Local Negotiation获得System用户的Token 可使用开源工具Rotten Potato、lonelypotato或者Juicy Potato
 2. 通过WinAPI CreateProcessWithToken创建新进程，传入System用户的Token 具有SeImpersonatePrivilege权限才能创建成功
 3. Token具有System权限
@@ -321,11 +343,13 @@ https://github.com/daikerSec/pipePotato
 代码实现了开启当前进程的SeImpersonatePrivilege权限，调用CreateProcessWithToken，传入当前进程的Token，创建一个进程，配合RottenPotato，可用来从LocalService提权至System权限
 
 #### 3.3.2 SeAssignPrimaryPrivilege权限的利用思路
+
 向进程(新创建或者挂起的进程)分配token
 
 通常，iis或者sqlserver用户具有该权限
 
 **思路1**
+
 1.利用NTLM Relay to Local Negotiation获得System用户的Token
 2.通过WinAPI CreateProcessAsUser创建新进程，传入System用户的Token
 3.Token具有System权限
@@ -348,6 +372,7 @@ https://github.com/daikerSec/pipePotato
 等同于获得了系统的最高权限
 
 **利用思路**
+
 1.调用LsaLogonUser获得Token
 2.将该Token添加至Local System account组
 3.该Token具有System权限
@@ -362,6 +387,7 @@ https://github.com/daikerSec/pipePotato
 用来实现备份操作，对当前系统任意文件具有读权限
 
 **利用思路**
+
 1.读取注册表HKEY_LOCAL_MACHINE\SAM、HKEY_LOCAL_MACHINE\SECURITY和HKEY_LOCAL_MACHINE\SYSTEM
 2.导出当前系统的所有用户hash mimikatz的命令如下：`lsadump::sam /sam:SamBkup.hiv /system:SystemBkup.hiv`
 
@@ -376,11 +402,13 @@ https://github.com/daikerSec/pipePotato
 用来实现恢复操作，对当前系统任意文件具有写权限
 
 **思路1**
+
 1.获得SeRestorePrivilege权限，修改注册表HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options
 2.劫持exe文件的启动
 3.实现提权或是作为后门
 
 **思路2**
+
 1.获得SeRestorePrivilege权限，向任意路径写入dll文件
 2.实现dll劫持
 3.实现提权或是作为后门
@@ -396,6 +424,7 @@ https://github.com/daikerSec/pipePotato
 用来创建Primary Token
 
 **利用思路**
+
 1.通过WinAPI ZwCreateToken创建Primary Token
 2.将Token添加至local administrator组
 3.Token具有System权限
@@ -411,6 +440,7 @@ https://github.com/daikerSec/pipePotato
 用来加载驱动文件
 
 **利用思路**
+
 1.创建驱动文件的注册表
 ```
 reg add hkcu\System\CurrentControlSet\CAPCOM /v ImagePath /t REG_SZ /d "\??\C:\test\Capcom.sys"
@@ -430,11 +460,13 @@ reg add hkcu\System\CurrentControlSet\CAPCOM /v Type /t REG_DWORD /d 1
 同SeRestorePrivilege类似，对当前系统任意文件具有写权限
 
 **思路1**
+
 1.获得SeTakeOwnershipPrivilege权限，修改注册表`HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options`
 2.劫持exe文件的启动
 3.实现提权或是作为后门
 
 **思路2**
+
 1.获得SeTakeOwnershipPrivilege权限，向任意路径写入dll文件
 2.实现dll劫持
 3.实现提权或是作为后门
@@ -451,9 +483,11 @@ reg add "hklm\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution 
 ```
 
 #### 3.3.9 SeDebugPrivilege权限的利用思路
+
 用来调试指定进程，包括读写内存，常用作实现dll注入
 
 **利用思路**
+
 1.找到System权限的进程
 2.dll注入
 3.获得System权限
@@ -465,5 +499,6 @@ https://github.com/3gstudent/Homework-of-C-Language/blob/master/EnableSeDebugPri
 
 
 ## 参考链接
+
 https://3gstudent.github.io/3gstudent.github.io/Windows%E6%9C%AC%E5%9C%B0%E6%8F%90%E6%9D%83%E5%B7%A5%E5%85%B7Juicy-Potato%E6%B5%8B%E8%AF%95%E5%88%86%E6%9E%90/
 https://3gstudent.github.io/3gstudent.github.io/%E6%B8%97%E9%80%8F%E6%8A%80%E5%B7%A7-Windows-Token%E4%B9%9D%E7%A7%8D%E6%9D%83%E9%99%90%E7%9A%84%E5%88%A9%E7%94%A8/
