@@ -172,7 +172,7 @@ public static <T> T createTemplatesImpl(Class c) throws Exception {
 
 
 
-final Object templates = Gadgets.createTemplatesImpl(ysoserial.MyClassLoader.class);
+`final Object templates = Gadgets.createTemplatesImpl(ysoserial.MyClassLoader.class);`
 
  
 
@@ -180,7 +180,7 @@ final Object templates = Gadgets.createTemplatesImpl(ysoserial.MyClassLoader.cla
 
  
 
-mvn clean package -DskipTests
+`mvn clean package -DskipTests`
 
 
 
