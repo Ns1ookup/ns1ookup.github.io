@@ -19,7 +19,7 @@
 3. 用ajp漏洞包含刚才上传的图片rce
 
 
- 
+
 
 利用难点：
 
@@ -72,7 +72,7 @@
 
 
 
-```
+```java
 import com.sun.org.apache.xalan.internal.xsltc.DOM;
 
 import com.sun.org.apache.xalan.internal.xsltc.TransletException;
@@ -144,7 +144,7 @@ public class MyClassLoader extends AbstractTranslet {
 
 
 
-```
+```java
 public static <T> T createTemplatesImpl(Class c) throws Exception {
     Class<T> tplClass = null;
 
@@ -188,7 +188,7 @@ public static <T> T createTemplatesImpl(Class c) throws Exception {
 
 对于reGeorg服务端的更改其实也就是request等对象的获取方式，为了方便注册filter，我直接让该类实现了Filter接口，在doFilter方法中完成reGeorg的主要逻辑，在equals方法中进行filter的动态注册
 
-```
+```java
 package reGeorg;
 
 import javax.servlet.*;
