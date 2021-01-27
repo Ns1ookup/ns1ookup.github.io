@@ -398,13 +398,13 @@ class XssAdditionalTaintStep extends Unit {
 
 接下来使用默认的XSS规则进行检测，查看检出情况。XSS接口中的反射XSS均被检出，不存在误报情况。
 
-![13](C:\Users\halo.liu\Documents\GitHub\ns1ookup.github.io\_posts\codeql_photo\13.png)
+![13](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/codeql_photo/13.png)
 
-![13](C:\Users\halo.liu\Documents\GitHub\ns1ookup.github.io\_posts\codeql_photo\14.png)
+![13](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/codeql_photo/14.png)
 
 除了原本存在XSS漏洞接口，SSRF/Cookies/IPForge接口均被检出反射型XSS漏洞。
 
-![13](C:\Users\halo.liu\Documents\GitHub\ns1ookup.github.io\_posts\codeql_photo\15.png)
+![13](https://raw.githubusercontent.com/Ns1ookup/ns1ookup.github.io/master/_posts/codeql_photo/15.png)
 
 
 
